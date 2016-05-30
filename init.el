@@ -85,15 +85,14 @@
 "Parse date for capturing ledger entries via org mode"
 (replace-regexp-in-string "-" "/" (org-read-date)))
 
-;; (defun capture-cleanup ()
-;;   (when (derived-mode-p 'ledger-mode)
-;;     (ledger-post-align-dwim)))
-
-(defun capture-cleanup
-  (case 'derived-mode-p
-    ('ledger-mode 'ledger-post-align-dwim)
-    (otherwise nil)
-    ))
+(defun capture-cleanup ()
+    (cond
+     ((derived-mode-p 'ledger-mode) (ledger-post-align-dwim))
+     (otherwise nil)
+     ))
+ 
+;; Aligns ledger-mode entries after org-capture
+(add-hook 'org-capture-before-finalize-hook 'capture-cleanup)
 
 ;; Aligns ledger-mode entries after org-capture
 (add-hook 'org-capture-before-finalize-hook 'capture-cleanup)
@@ -116,9 +115,4 @@
 	 "%(ledger-read-date) * %^{payee}
     expenses:%^{account}  $%^{amount}
     expenses:cash" :empty-lines 1)
-	("lt" "Cash" plain
-	 (file "~/org/ledger")
-	 "5/29/15 * test
-    expenses:test  1.00
-    expenses:testtest" :empty-lines 1)
 	))
